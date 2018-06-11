@@ -2,7 +2,7 @@
 <mat-sidenav-container class="app-sidenav-container">
   <mat-sidenav class="app-sidenav "
     [opened]="!isScreenSmall()"
-    [mode] = "isScreenSmall() ? 'over' : 'side'"
+    [mode] = "isScreenSmall() ? 'side' : 'over'"
     #sidenav>
     <mat-toolbar color="primary">Dashboard</mat-toolbar>
     <mat-list>
