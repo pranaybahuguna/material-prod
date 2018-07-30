@@ -1,0 +1,41 @@
+<mat-card >
+  <h3>Create Invoice</h3>
+<form class="form-container" [formGroup]="invoiceForm" novalidate (ngSubmit)="onSubmit()">
+          <mat-form-field color="primary">
+            <input matInput placeholder="Item" formControlName="item">
+            <mat-error *ngIf="invoiceForm.controls.item.invalid && invoiceForm.controls.item.touched"> item is required </mat-error>
+          </mat-form-field>
+
+          <mat-form-field color="primary">
+            <input matInput [matDatepicker]="date" placeholder="Date" formControlName="date" disabled>
+            <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
+            <mat-datepicker #date disabled="false"></mat-datepicker>
+            <mat-error *ngIf="invoiceForm.controls.item.invalid && invoiceForm.controls.item.touched"> date is required </mat-error>
+          </mat-form-field>
+      
+          <mat-form-field color="primary">
+            <input matInput [matDatepicker]="due" placeholder="Due Date" formControlName="due" disabled>
+            <mat-datepicker-toggle matSuffix [for]="due"></mat-datepicker-toggle>
+            <mat-datepicker #due disabled="false"></mat-datepicker>
+            <mat-error *ngIf="invoiceForm.controls.item.invalid && invoiceForm.controls.item.touched"> due date is required </mat-error>
+          </mat-form-field>
+        
+          <mat-form-field color="primary">
+              <input matInput placeholder="Qty" type="number" formControlName="qty">
+              <mat-error *ngIf="invoiceForm.controls.item.invalid && invoiceForm.controls.item.touched"> qty is required </mat-error>
+          </mat-form-field>
+
+          <mat-form-field color="primary">
+              <input matInput placeholder="Tax" type="number" formControlName="tax">
+          </mat-form-field>
+
+          <mat-form-field color="primary">
+              <input matInput placeholder="Rate" type="number" formControlName="rate">
+          </mat-form-field>
+          <div>
+            <button mat-raised-button [disabled]="!invoiceForm.valid" type="submit" color="primary">Save</button>
+            <button mat-raised-button type="reset" (click)="cancelBtnHandler()">Cancel</button>
+          </div>
+  </form>
+</mat-card>
+  

@@ -1,0 +1,23 @@
+.table-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 690px;
+    min-width: 300px;
+  }
+  
+  .mat-table {
+    overflow: auto;
+    max-height: 690px;
+  }
+  .menu-bar{
+      position: absolute;
+      right: 60px;
+      color: aliceblue;
+      background-color: #3f51b5
+  }
+.mat-header-row {
+    top: 0;
+    position: sticky;
+    z-index: 1;
+    background-color: inherit;
+}
