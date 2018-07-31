@@ -17,6 +17,8 @@ import { MatInputModule } from "@angular/material/input";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatDialogModule } from "@angular/material/dialog";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 const exportedMatModules = [
   CommonModule,
@@ -33,7 +35,9 @@ const exportedMatModules = [
   MatDatepickerModule,
   MatNativeDateModule,
   MatSnackBarModule,
-  MatDialogModule
+  MatDialogModule,
+  MatPaginatorModule,
+  MatProgressSpinnerModule
 ];
 
 @NgModule({

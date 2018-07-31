@@ -1,9 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { InvoiceService } from "../../services/invoice.service";
 import { Invoice } from "../../models/invoice";
 import { Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material";
+import { MatSnackBar, MatPaginator } from "@angular/material";
 import { remove } from "lodash";
+import "rxjs/Rx";
 
 @Component({
   selector: "app-invoice-listing",
@@ -18,6 +19,10 @@ export class InvoiceListingComponent implements OnInit {
   ) {}
   displayedColumns = ["item", "date", "due", "qty", "rate", "tax", "action"];
   dataSource: Invoice[] = [];
+  resultsLength = 0;
+  resultsLoading = false;
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   newInvoiceHandler() {
     this.router.navigate(["dashboard", "invoices", "new"]);
@@ -45,6 +50,7 @@ export class InvoiceListingComponent implements OnInit {
   }
 
   errorHandler(error, message) {
+    this.resultsLoading = false;
     console.log(error);
     this.snackBar.open(message, "Error", {
       duration: 3000
@@ -52,13 +58,44 @@ export class InvoiceListingComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.invoiceService.getInvoices().subscribe(
+    this.paginator.page.subscribe(
       data => {
-        this.dataSource = data;
+        this.resultsLoading = true;
+        this.invoiceService
+          .getInvoices({
+            page: ++data.pageIndex,
+            perPage: data.pageSize
+          })
+          .subscribe(
+            data => {
+              console.log(data);
+              this.dataSource = data.docs;
+              this.resultsLength = data.total;
+              this.resultsLoading = false;
+            },
+            err => {
+              this.errorHandler(err, "Failed to Fetch Invoices");
+            }
+          );
+      },
+      err => {
+        this.errorHandler(err, "Failed to Fetch Invoices");
+      }
+    );
+    this.populateInvoices();
+  }
+
+  private populateInvoices() {
+    this.resultsLoading = true;
+    this.invoiceService.getInvoices({ page: 1, perPage: 10 }).subscribe(
+      data => {
+        this.dataSource = data.docs;
+        this.resultsLength = data.total;
+        this.resultsLoading = false;
         console.log(data);
       },
       err => {
-        console.log(err);
+        this.errorHandler(err, "Failed to Fetch Invoices");
       }
     );
   }
