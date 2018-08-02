@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { InvoiceService } from "../../services/invoice.service";
 import { Invoice } from "../../models/invoice";
 import { Router } from "@angular/router";
-import { MatSnackBar, MatPaginator } from "@angular/material";
+import { MatSnackBar, MatPaginator, MatSort } from "@angular/material";
 import { remove } from "lodash";
 import "rxjs/Rx";
 
@@ -11,7 +11,7 @@ import "rxjs/Rx";
   templateUrl: "./invoice-listing.component.html",
   styleUrls: ["./invoice-listing.component.scss"]
 })
-export class InvoiceListingComponent implements OnInit {
+export class InvoiceListingComponent implements OnInit, AfterViewInit {
   constructor(
     private invoiceService: InvoiceService,
     private router: Router,
@@ -23,6 +23,7 @@ export class InvoiceListingComponent implements OnInit {
   resultsLoading = false;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   newInvoiceHandler() {
     this.router.navigate(["dashboard", "invoices", "new"]);
@@ -49,22 +50,16 @@ export class InvoiceListingComponent implements OnInit {
     this.router.navigate(["dashboard", "invoices", id]);
   }
 
-  errorHandler(error, message) {
-    this.resultsLoading = false;
-    console.log(error);
-    this.snackBar.open(message, "Error", {
-      duration: 3000
-    });
-  }
-
-  ngOnInit() {
+  ngAfterViewInit() {
     this.paginator.page.subscribe(
       data => {
         this.resultsLoading = true;
         this.invoiceService
           .getInvoices({
-            page: ++data.pageIndex,
-            perPage: data.pageSize
+            page: data.pageIndex,
+            perPage: data.pageSize,
+            sortField: this.sort.active,
+            sortDir: this.sort.direction
           })
           .subscribe(
             data => {
@@ -82,21 +77,45 @@ export class InvoiceListingComponent implements OnInit {
         this.errorHandler(err, "Failed to Fetch Invoices");
       }
     );
+    this.sort.sortChange.subscribe(
+      data => {
+        console.log(data);
+      },
+      err => {}
+    );
+
     this.populateInvoices();
   }
 
+  errorHandler(error, message) {
+    this.resultsLoading = false;
+    console.log(error);
+    this.snackBar.open(message, "Error", {
+      duration: 3000
+    });
+  }
+
+  ngOnInit() {}
+
   private populateInvoices() {
     this.resultsLoading = true;
-    this.invoiceService.getInvoices({ page: 1, perPage: 10 }).subscribe(
-      data => {
-        this.dataSource = data.docs;
-        this.resultsLength = data.total;
-        this.resultsLoading = false;
-        console.log(data);
-      },
-      err => {
-        this.errorHandler(err, "Failed to Fetch Invoices");
-      }
-    );
+    this.invoiceService
+      .getInvoices({
+        page: 0,
+        perPage: 10,
+        sortField: this.sort.active,
+        sortDir: this.sort.direction
+      })
+      .subscribe(
+        data => {
+          this.dataSource = data.docs;
+          this.resultsLength = data.total;
+          this.resultsLoading = false;
+          console.log(data);
+        },
+        err => {
+          this.errorHandler(err, "Failed to Fetch Invoices");
+        }
+      );
   }
 }
