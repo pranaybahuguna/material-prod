@@ -1,7 +1,10 @@
 <mat-toolbar>
-  <h3>Invoices</h3>
+  <mat-form-field color="primary">
+    <input matInput (keyup) = "filterText
+    ($event)" placeholder="Item Filter">
+  </mat-form-field>
   <div class="menu-bar">
-  <button mat-button (click) ="newInvoiceHandler()">
+  <button mat-button (click) ="newInvoiceHandler($event)">
     New Invoice
   </button>
   </div>
@@ -31,17 +34,17 @@
       </ng-container>
   
       <ng-container matColumnDef="qty">
-        <mat-header-cell *matHeaderCellDef sticky=true> Quantity </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef sticky=true mat-sort-header> Quantity </mat-header-cell>
         <mat-cell *matCellDef="let invoice"> {{invoice.qty}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="rate">
-        <mat-header-cell *matHeaderCellDef sticky=true> Rate </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef sticky=true mat-sort-header> Rate </mat-header-cell>
         <mat-cell *matCellDef="let invoice"> {{invoice.rate}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="tax">
-        <mat-header-cell *matHeaderCellDef sticky=true> Tax </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef sticky=true mat-sort-header> Tax </mat-header-cell>
         <mat-cell *matCellDef="let invoice"> {{invoice.tax}} </mat-cell>
       </ng-container>
 

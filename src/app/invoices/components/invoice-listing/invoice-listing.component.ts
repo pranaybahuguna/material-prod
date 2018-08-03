@@ -5,6 +5,11 @@ import { Router } from "@angular/router";
 import { MatSnackBar, MatPaginator, MatSort } from "@angular/material";
 import { remove } from "lodash";
 import "rxjs/Rx";
+import { catchError } from "rxjs/operators/catchError";
+import { map } from "rxjs/operators/map";
+import { startWith } from "rxjs/operators/";
+import { switchMap } from "rxjs/operators/";
+import { merge } from "rxjs/operators/";
 
 @Component({
   selector: "app-invoice-listing",
@@ -21,6 +26,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
   dataSource: Invoice[] = [];
   resultsLength = 0;
   resultsLoading = false;
+  private itemFilter = "";
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -51,6 +57,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // This will run when the paginator is triggered
     this.paginator.page.subscribe(
       data => {
         this.resultsLoading = true;
@@ -59,7 +66,8 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
             page: data.pageIndex,
             perPage: data.pageSize,
             sortField: this.sort.active,
-            sortDir: this.sort.direction
+            sortDir: this.sort.direction,
+            filter: this.itemFilter
           })
           .subscribe(
             data => {
@@ -77,13 +85,37 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
         this.errorHandler(err, "Failed to Fetch Invoices");
       }
     );
+
+    // This will run when the sort header is triggered
     this.sort.sortChange.subscribe(
       data => {
-        console.log(data);
+        this.resultsLoading = true;
+        this.invoiceService
+          .getInvoices({
+            page: this.paginator.pageIndex,
+            perPage: this.paginator.pageSize,
+            sortField: data.active,
+            sortDir: data.direction,
+            filter: this.itemFilter
+          })
+          .subscribe(
+            data => {
+              console.log(data);
+              this.dataSource = data.docs;
+              this.resultsLength = data.total;
+              this.resultsLoading = false;
+            },
+            err => {
+              this.errorHandler(err, "Failed to Fetch Invoices");
+            }
+          );
       },
-      err => {}
+      err => {
+        this.errorHandler(err, "Failed to Fetch Invoices");
+      }
     );
 
+    // This will run the very first timr page gets populated
     this.populateInvoices();
   }
 
@@ -97,6 +129,31 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {}
 
+  filterText(event: any) {
+    this.resultsLoading = true;
+    this.paginator.pageIndex = 0;
+    this.itemFilter = event.target.value;
+    this.invoiceService
+      .getInvoices({
+        page: this.paginator.pageIndex,
+        perPage: this.paginator.pageSize,
+        sortField: this.sort.active,
+        sortDir: this.sort.direction,
+        filter: this.itemFilter
+      })
+      .subscribe(
+        data => {
+          this.dataSource = data.docs;
+          this.resultsLength = data.total;
+          this.resultsLoading = false;
+          console.log(data);
+        },
+        err => {
+          this.errorHandler(err, "Failed to Fetch Invoices");
+        }
+      );
+  }
+
   private populateInvoices() {
     this.resultsLoading = true;
     this.invoiceService
@@ -104,7 +161,8 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
         page: 0,
         perPage: 10,
         sortField: this.sort.active,
-        sortDir: this.sort.direction
+        sortDir: this.sort.direction,
+        filter: this.itemFilter
       })
       .subscribe(
         data => {
