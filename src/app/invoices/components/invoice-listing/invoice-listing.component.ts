@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
+import { Component, OnInit, ViewChild, AfterViewInit,ChangeDetectorRef } from "@angular/core";
 import { InvoiceService } from "../../services/invoice.service";
 import { Invoice } from "../../models/invoice";
 import { Router } from "@angular/router";
@@ -7,9 +7,9 @@ import { remove } from "lodash";
 import "rxjs/Rx";
 import { catchError } from "rxjs/operators/catchError";
 import { map } from "rxjs/operators/map";
-import { startWith } from "rxjs/operators/";
-import { switchMap } from "rxjs/operators/";
-import { merge } from "rxjs/operators/";
+import { startWith } from "rxjs/operators";
+import { switchMap } from "rxjs/operators";
+import { merge } from "rxjs/operators";
 
 @Component({
   selector: "app-invoice-listing",
@@ -20,7 +20,8 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
   constructor(
     private invoiceService: InvoiceService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdRef:ChangeDetectorRef
   ) {}
   displayedColumns = ["item", "date", "due", "qty", "rate", "tax", "action"];
   dataSource: Invoice[] = [];
@@ -60,7 +61,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
     // This will run when the paginator is triggered
     this.paginator.page.subscribe(
       data => {
-        this.resultsLoading = true;
+        this.changeSpinnerState(true);
         this.invoiceService
           .getInvoices({
             page: data.pageIndex,
@@ -74,7 +75,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
               console.log(data);
               this.dataSource = data.docs;
               this.resultsLength = data.total;
-              this.resultsLoading = false;
+              this.changeSpinnerState(false);
             },
             err => {
               this.errorHandler(err, "Failed to Fetch Invoices");
@@ -89,7 +90,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
     // This will run when the sort header is triggered
     this.sort.sortChange.subscribe(
       data => {
-        this.resultsLoading = true;
+        this.changeSpinnerState(true);
         this.invoiceService
           .getInvoices({
             page: this.paginator.pageIndex,
@@ -103,7 +104,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
               console.log(data);
               this.dataSource = data.docs;
               this.resultsLength = data.total;
-              this.resultsLoading = false;
+              this.changeSpinnerState(false);
             },
             err => {
               this.errorHandler(err, "Failed to Fetch Invoices");
@@ -130,7 +131,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
   ngOnInit() {}
 
   filterText(event: any) {
-    this.resultsLoading = true;
+    this.changeSpinnerState(true);
     this.paginator.pageIndex = 0;
     this.itemFilter = event.target.value;
     this.invoiceService
@@ -145,7 +146,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
         data => {
           this.dataSource = data.docs;
           this.resultsLength = data.total;
-          this.resultsLoading = false;
+          this.changeSpinnerState(false);
           console.log(data);
         },
         err => {
@@ -155,7 +156,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
   }
 
   private populateInvoices() {
-    this.resultsLoading = true;
+    this.changeSpinnerState(true);
     this.invoiceService
       .getInvoices({
         page: 0,
@@ -168,12 +169,16 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
         data => {
           this.dataSource = data.docs;
           this.resultsLength = data.total;
-          this.resultsLoading = false;
+          this.changeSpinnerState(false);
           console.log(data);
         },
         err => {
           this.errorHandler(err, "Failed to Fetch Invoices");
         }
       );
+  }
+  changeSpinnerState(isEnabled : boolean){
+    this.resultsLoading = isEnabled;
+    this.cdRef.detectChanges();
   }
 }

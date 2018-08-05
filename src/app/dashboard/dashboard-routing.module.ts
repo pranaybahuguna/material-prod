@@ -17,9 +17,9 @@ const routes: Routes = [
       {
         path: "clients",
         component: ClientListingComponent
-      },
+      },  
       {
-        path: "invoices/new",
+        path: "invoices/:id",
         component: InvoiceFormComponent
       },
       {

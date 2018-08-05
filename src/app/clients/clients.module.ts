@@ -1,17 +1,23 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ClientListingComponent } from './components/client-listing/client-listing.component';
-import { MaterialModule } from '../shared/material.module';
-import { FormsModule } from '@angular/forms';
-
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ClientListingComponent } from "./components/client-listing/client-listing.component";
+import { MaterialModule } from "../shared/material.module";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { HttpClientModule } from "@angular/common/http";
+import { ClientService } from "./services/client.service";
+import { FormDialogComponent } from "./components/form-dialog/form-dialog.component";
 
 @NgModule({
   imports: [
     CommonModule,
     MaterialModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
+    ReactiveFormsModule
   ],
-  declarations: [ClientListingComponent],
-  exports : [ClientListingComponent]
+  declarations: [ClientListingComponent, FormDialogComponent],
+  exports: [ClientListingComponent],
+  providers: [ClientService],
+  entryComponents: [FormDialogComponent]
 })
-export class ClientsModule { }
+export class ClientsModule {}

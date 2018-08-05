@@ -1,3 +1,35 @@
-<mat-card>
-  <h3>Client Listing</h3>
-</mat-card>
+<mat-toolbar>
+   <!-- <mat-form-field color="accent">
+      <input matInput (keyup)="filterText($event)" placeholder="Item Filter" />
+    </mat-form-field>-->
+    <div class="menu-bar">
+    <button mat-button (click) ="openFormDialog($event)">
+      New Client
+    </button>
+    </div>
+  </mat-toolbar>
+
+<div class="table-container mat-elevation-z8">
+  <mat-table #table [dataSource]="dataSource">
+
+    <ng-container matColumnDef="firstName">
+      <mat-header-cell *matHeaderCellDef> FirstName </mat-header-cell>
+      <mat-cell *matCellDef="let client"> {{client.firstName}} </mat-cell>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="lastName">
+      <mat-header-cell *matHeaderCellDef> LastName </mat-header-cell>
+      <mat-cell *matCellDef="let client"> {{client.lastName}} </mat-cell>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="email">
+      <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
+      <mat-cell *matCellDef="let client"> {{client.email}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>

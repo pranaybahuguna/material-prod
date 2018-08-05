@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>Hi {{data.name}}</h1>
+    <div mat-dialog-content>
+      <form class="form-contaier" [formGroup]="clientForm">
+        <mat-form-field> 
+          <input matInput formControlName = "firstName" placeholder="FirstName">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput formControlName = "lastName" placeholder="LastName">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput formControlName = "email" placeholder="Email">
+        </mat-form-field>
+      </form> 
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="onNoClick()">No Thanks</button>
+      <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Ok</button>
+    </div>
