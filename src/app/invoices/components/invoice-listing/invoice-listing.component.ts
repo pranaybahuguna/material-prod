@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewChild, AfterViewInit,ChangeDetectorRef } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  ChangeDetectorRef
+} from "@angular/core";
 import { InvoiceService } from "../../services/invoice.service";
 import { Invoice } from "../../models/invoice";
 import { Router } from "@angular/router";
@@ -21,7 +27,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
     private invoiceService: InvoiceService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private cdRef:ChangeDetectorRef
+    private cdRef: ChangeDetectorRef
   ) {}
   displayedColumns = ["item", "date", "due", "qty", "rate", "tax", "action"];
   dataSource: Invoice[] = [];
@@ -177,7 +183,7 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
         }
       );
   }
-  changeSpinnerState(isEnabled : boolean){
+  changeSpinnerState(isEnabled: boolean) {
     this.resultsLoading = isEnabled;
     this.cdRef.detectChanges();
   }
