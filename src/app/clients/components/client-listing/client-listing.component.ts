@@ -5,6 +5,7 @@ import { MatDialog, MatSnackBar, MatTableDataSource } from "@angular/material";
 import { FormDialogComponent } from "../form-dialog/form-dialog.component";
 import "rxjs/add/operator/mergeMap";
 import { errorHandler } from "@angular/platform-browser/src/browser";
+import { isUndefined } from "util";
 
 @Component({
   selector: "app-client-listing",
@@ -13,7 +14,7 @@ import { errorHandler } from "@angular/platform-browser/src/browser";
 })
 export class ClientListingComponent implements OnInit {
   displayedColumns = ["firstName", "lastName", "email", "action"];
-  dataSource = new MatTableDataSource<Client>();
+  private dataSource = new MatTableDataSource<Client>();
   resultsLoading = false;
   constructor(
     private clientService: ClientService,
@@ -47,10 +48,8 @@ export class ClientListingComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
-  deleteBtnHandler() {}
-
   openFormDialog(clientId: string): void {
-    let options = {
+    const options = {
       width: "400px",
       height: "350px",
       data: {}
@@ -59,24 +58,33 @@ export class ClientListingComponent implements OnInit {
       options.data = { clientId: clientId };
     }
     let dialogRef = this.dialog.open(FormDialogComponent, options);
-
-    dialogRef.afterClosed().subscribe(client => {
-      if (client.id)
-        if (client != undefined) {
-          this.clientService.createClient(client).subscribe(
-            data => {
-              this.dataSource.data.push(data);
-              this.dataSource.data = [...this.dataSource.data];
-              this.snackBar.open("Client Created", "Success", {
-                duration: 2000
-              });
-            },
-            err => {
-              this.errorHandler(err, "Failed to create client");
-            }
-          );
-        }
-      console.log(`Client is ${client}`);
-    });
+    dialogRef
+      .afterClosed()
+      .filter(clientParam => typeof clientParam === "object")
+      .flatMap(result => {
+        return clientId
+          ? this.clientService.updateClient(clientId, result)
+          : this.clientService.createClient(result);
+      })
+      .subscribe(
+        client => {
+          let successMsg = "";
+          if (clientId) {
+            const index = this.dataSource.data.findIndex(
+              client => client._id === clientId
+            );
+            this.dataSource.data[index] = client;
+            successMsg = "Client updated";
+          } else {
+            this.dataSource.data.push(client);
+            successMsg = "Client created";
+          }
+          this.dataSource.data = [...this.dataSource.data];
+          this.snackBar.open(successMsg, "Success", {
+            duration: 2000
+          });
+        },
+        err => this.errorHandler(err, "Failed to created Client")
+      );
   }
 }

@@ -16,7 +16,8 @@ import { Client } from "../../models/client";
 })
 export class FormDialogComponent implements OnInit {
   clientForm: FormGroup;
-  private client: Client;
+  title = "New Client";
+  clientId: String;
   constructor(
     public dialogRef: MatDialogRef<FormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -38,10 +39,10 @@ export class FormDialogComponent implements OnInit {
   }
 
   setClientToForm(clientId: any): any {
+    this.clientId = clientId;
     this.clientService.getClient(clientId).subscribe(
       client => {
-        this.client = client;
-        this.clientForm.patchValue(this.client);
+        this.clientForm.patchValue(client);
       },
       err => {
         this.errorHandler(err, "Failed to populate client");
