@@ -4,6 +4,8 @@ import { InvoiceService } from "../../services/invoice.service";
 import { MatSnackBar } from "@angular/material";
 import { Router, ActivatedRoute } from "@angular/router";
 import { Invoice } from "../../models/invoice";
+import { ClientService } from "../../../clients/services/client.service";
+import { Client } from "../../../clients/models/client";
 
 @Component({
   selector: "app-invoice-form",
@@ -13,9 +15,11 @@ import { Invoice } from "../../models/invoice";
 export class InvoiceFormComponent implements OnInit {
   private invoiceForm: FormGroup;
   private invoice: Invoice;
+  clients: Client[] = [];
   constructor(
     private fb: FormBuilder,
     private invoiceService: InvoiceService,
+    private clientService: ClientService,
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute
@@ -24,12 +28,13 @@ export class InvoiceFormComponent implements OnInit {
   ngOnInit() {
     this.createForm();
     this.setInvoiceToForm();
+    this.setClients();
   }
 
   private setInvoiceToForm() {
     this.route.params.subscribe(params => {
       let id = params["id"];
-      if (!id) {
+      if (!id || id == "new") {
         return;
       }
       this.invoiceService.getInvoice(id).subscribe(
@@ -37,7 +42,9 @@ export class InvoiceFormComponent implements OnInit {
           this.invoice = invoice;
           this.invoiceForm.patchValue(this.invoice);
         },
-        err => {}
+        err => {
+          this.errorHandler(err, "Failed to set invoice");
+        }
       );
     });
   }
@@ -49,8 +56,20 @@ export class InvoiceFormComponent implements OnInit {
       due: ["", Validators.required],
       qty: ["", Validators.required],
       rate: "",
-      tax: ""
+      tax: "",
+      client: ["", Validators.required]
     });
+  }
+
+  private setClients() {
+    this.clientService.getClients().subscribe(
+      data => {
+        this.clients = data;
+      },
+      err => {
+        this.errorHandler(err, "Failed to fetch clients for select");
+      }
+    );
   }
 
   onSubmit() {

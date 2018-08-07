@@ -6,6 +6,7 @@ import { FormDialogComponent } from "../form-dialog/form-dialog.component";
 import "rxjs/add/operator/mergeMap";
 import { errorHandler } from "@angular/platform-browser/src/browser";
 import { isUndefined } from "util";
+import { remove } from "lodash";
 
 @Component({
   selector: "app-client-listing",
@@ -46,6 +47,23 @@ export class ClientListingComponent implements OnInit {
   changeSpinnerState(isEnabled: boolean) {
     this.resultsLoading = isEnabled;
     this.cdRef.detectChanges();
+  }
+
+  deleteBtnHandler(id: string) {
+    this.clientService.deleteClient(id).subscribe(
+      data => {
+        remove(this.dataSource.data, item => {
+          return item._id === data._id;
+        });
+        this.dataSource.data = [...this.dataSource.data];
+        this.snackBar.open("Client Deleted", "Success", {
+          duration: 2000
+        });
+      },
+      err => {
+        this.errorHandler(err, "Failed to delete client");
+      }
+    );
   }
 
   openFormDialog(clientId: string): void {

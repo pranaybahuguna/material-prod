@@ -20,6 +20,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSortModule } from "@angular/material/sort";
+import { MatSelectModule } from "@angular/material/select";
 
 const exportedMatModules = [
   CommonModule,
@@ -39,7 +40,8 @@ const exportedMatModules = [
   MatDialogModule,
   MatPaginatorModule,
   MatProgressSpinnerModule,
-  MatSortModule
+  MatSortModule,
+  MatSelectModule
 ];
 
 @NgModule({

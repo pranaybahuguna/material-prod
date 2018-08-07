@@ -34,6 +34,7 @@ export class FormDialogComponent implements OnInit {
     this.initClientForm();
     console.log(this.data);
     if (this.data && this.data.clientId) {
+      this.title = "Edit Client";
       this.setClientToForm(this.data.clientId);
     }
   }

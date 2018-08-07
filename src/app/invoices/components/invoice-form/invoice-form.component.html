@@ -32,6 +32,14 @@
           <mat-form-field color="primary">
               <input matInput placeholder="Rate" type="number" formControlName="rate">
           </mat-form-field>
+          <mat-form-field>
+              <mat-select placeholder="Client" formControlName="client">
+                <mat-option *ngFor="let client of clients" [value]="client._id">
+                  {{ client.firstName }}&nbsp;{{ client.lastName}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="invoiceForm.controls.client.invalid && invoiceForm.controls.client.touched"> client is required </mat-error>
+            </mat-form-field>
           <div>
             <button mat-raised-button [disabled]="!invoiceForm.valid" type="submit" color="primary">Save</button>
             <button mat-raised-button type="reset" (click)="cancelBtnHandler()">Cancel</button>
