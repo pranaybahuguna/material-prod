@@ -1,8 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { AuthService } from "../core/services/auth.service";
 import { JwtService } from "../core/services/jwt.service";
 import { Router } from "@angular/router";
+import { MatSnackBar } from "@angular/material";
 
 @Component({
   selector: "app-auth",
@@ -11,15 +12,20 @@ import { Router } from "@angular/router";
 })
 export class AuthComponent implements OnInit {
   authForm: FormGroup;
+  title = "";
+  resultsLoading = false;
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private jwtService: JwtService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.initForm();
+    this.title = this.router.url === "/login" ? "Login" : "Signup";
   }
 
   private initForm() {
@@ -29,16 +35,48 @@ export class AuthComponent implements OnInit {
     });
   }
 
+  errorHandler(error, message) {
+    this.changeSpinnerState(false);
+    console.log(error);
+    this.snackBar.open(message, "Error", {
+      duration: 3000
+    });
+  }
+  changeSpinnerState(isEnabled: boolean) {
+    this.resultsLoading = isEnabled;
+    this.cdRef.detectChanges();
+  }
   onSubmit() {
-    this.authService.login(this.authForm.value).subscribe(
-      data => {
-        this.jwtService.setToken(data.token);
-        this.router.navigate(["/dashboard", "invoices"]);
-        console.log(data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.changeSpinnerState(true);
+    if (this.title === "Signup") {
+      this.authService.signup(this.authForm.value).subscribe(
+        data => {
+          this.router.navigate(["/dashboard", "invoices"]);
+          this.snackBar.open(data.message, "Success", {
+            duration: 3000
+          });
+          this.changeSpinnerState(false);
+          console.log(data);
+        },
+        err => {
+          this.errorHandler(err, err.error);
+        }
+      );
+    } else {
+      this.authService.login(this.authForm.value).subscribe(
+        data => {
+          this.jwtService.setToken(data.token);
+          this.router.navigate(["/dashboard", "invoices"]);
+          this.snackBar.open("Login Successful", "Success", {
+            duration: 3000
+          });
+          this.changeSpinnerState(false);
+          console.log(data);
+        },
+        err => {
+          this.errorHandler(err, "Oops Wrong Credentials");
+        }
+      );
+    }
   }
 }

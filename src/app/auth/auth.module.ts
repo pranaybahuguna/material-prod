@@ -1,9 +1,10 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AuthComponent } from './auth.component';
-import { MaterialModule } from '../shared/material.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CoreModule } from '../core/core.module';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { AuthComponent } from "./auth.component";
+import { MaterialModule } from "../shared/material.module";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { CoreModule } from "../core/core.module";
+import { RouterModule } from "../../../node_modules/@angular/router";
 
 @NgModule({
   imports: [
@@ -11,8 +12,9 @@ import { CoreModule } from '../core/core.module';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    CoreModule
+    CoreModule,
+    RouterModule
   ],
   declarations: [AuthComponent]
 })
-export class AuthModule { }
+export class AuthModule {}

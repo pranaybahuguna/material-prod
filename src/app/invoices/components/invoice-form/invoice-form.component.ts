@@ -15,6 +15,7 @@ import { Client } from "../../../clients/models/client";
 export class InvoiceFormComponent implements OnInit {
   private invoiceForm: FormGroup;
   private invoice: Invoice;
+  title = "";
   clients: Client[] = [];
   constructor(
     private fb: FormBuilder,
@@ -40,6 +41,7 @@ export class InvoiceFormComponent implements OnInit {
       this.invoiceService.getInvoice(id).subscribe(
         invoice => {
           this.invoice = invoice;
+          this.title = "Edit Invoice";
           this.invoiceForm.patchValue(this.invoice);
         },
         err => {
@@ -50,6 +52,7 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   private createForm() {
+    this.title = "New Invoice";
     this.invoiceForm = this.fb.group({
       item: ["", Validators.required],
       date: ["", Validators.required],

@@ -16,7 +16,7 @@ import { Client } from "../../models/client";
 })
 export class FormDialogComponent implements OnInit {
   clientForm: FormGroup;
-  title = "New Client";
+  title = "";
   clientId: String;
   constructor(
     public dialogRef: MatDialogRef<FormDialogComponent>,
@@ -59,6 +59,7 @@ export class FormDialogComponent implements OnInit {
   }
 
   private initClientForm() {
+    this.title = "New Client";
     this.clientForm = this.fb.group({
       firstName: ["", Validators.required],
       lastName: ["", Validators.required],
