@@ -35,6 +35,19 @@ export class AuthComponent implements OnInit {
     });
   }
 
+  googleAuthHandler() {
+    this.authService.googleAuth().subscribe(
+      data => {
+        debugger;
+        console.log(data);
+      },
+      err => {
+        debugger;
+        this.errorHandler(err, err.error);
+      }
+    );
+  }
+
   errorHandler(error, message) {
     this.changeSpinnerState(false);
     console.log(error);
