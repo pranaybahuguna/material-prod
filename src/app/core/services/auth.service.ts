@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { User, LoginResp, SignupResp } from "../models/user";
+import { User, LoginResp, SignupResp, LogoutRsp } from "../models/user";
 import { Observable } from "rxjs/Observable";
 import { environment } from "../../../environments/environment";
 
@@ -41,5 +41,9 @@ export class AuthService {
       `${environment.api_url}/auth/authenticate`,
       httpOptions
     );
+  }
+
+  logOut(): Observable<LogoutRsp> {
+    return this.httpClient.get<LogoutRsp>(`${environment.api_url}/auth/logout`);
   }
 }
