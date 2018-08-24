@@ -20,12 +20,5 @@ import { TokenInterceptorService } from "../core/services/token-interceptor.serv
     ClientsModule
   ],
   declarations: [DashboardComponent, SideNavComponent, ToolbarComponent],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptorService,
-      multi: true
-    }
-  ]
 })
 export class DashboardModule {}

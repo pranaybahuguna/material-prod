@@ -29,14 +29,16 @@ export class InvoiceListingComponent implements OnInit, AfterViewInit {
     private snackBar: MatSnackBar,
     private cdRef: ChangeDetectorRef
   ) {}
-  displayedColumns = ["item", "date", "due", "qty", "rate", "tax", "action"];
+  displayedColumns = ["item", "date", "due", "action"];
   dataSource: Invoice[] = [];
   resultsLength = 0;
   resultsLoading = false;
   private itemFilter = "";
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator;
+  @ViewChild(MatSort)
+  sort: MatSort;
 
   newInvoiceHandler() {
     this.router.navigate(["dashboard", "invoices", "new"]);

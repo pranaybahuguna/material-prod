@@ -5,11 +5,24 @@ import { MaterialModule } from "../shared/material.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { InvoiceService } from "./services/invoice.service";
 import { InvoiceFormComponent } from "./components/invoice-form/invoice-form.component";
+import { InvoiceViewComponent } from "./components/invoice-view/invoice-view.component";
+import { RouterModule } from "@angular/router";
+import { EditInvoiceResolverService } from "./services/edit-invoice-resolver.service";
 
 @NgModule({
-  imports: [CommonModule, MaterialModule, FormsModule, ReactiveFormsModule],
-  declarations: [InvoiceListingComponent, InvoiceFormComponent],
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule
+  ],
+  declarations: [
+    InvoiceListingComponent,
+    InvoiceFormComponent,
+    InvoiceViewComponent
+  ],
   exports: [InvoiceListingComponent],
-  providers: [InvoiceService]
+  providers: [InvoiceService, EditInvoiceResolverService]
 })
 export class InvoicesModule {}

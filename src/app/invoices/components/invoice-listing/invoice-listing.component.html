@@ -32,7 +32,7 @@
         <mat-cell *matCellDef="let invoice"> {{invoice.due | date}} </mat-cell>
       </ng-container>
   
-      <ng-container matColumnDef="qty">
+      <!--<ng-container matColumnDef="qty">
         <mat-header-cell *matHeaderCellDef sticky=true mat-sort-header> Quantity </mat-header-cell>
         <mat-cell *matCellDef="let invoice"> {{invoice.qty}} </mat-cell>
       </ng-container>
@@ -45,7 +45,7 @@
       <ng-container matColumnDef="tax">
         <mat-header-cell *matHeaderCellDef sticky=true mat-sort-header> Tax </mat-header-cell>
         <mat-cell *matCellDef="let invoice"> {{invoice.tax}} </mat-cell>
-      </ng-container>
+      </ng-container>-->
 
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef sticky=true> Action </mat-header-cell>
@@ -54,6 +54,10 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menu="matMenu">
+            <button mat-menu-item [routerLink]="[invoice._id,'view']">
+                  <mat-icon>pageview</mat-icon>
+                  <span>View</span>
+                </button>
             <button mat-menu-item (click) = "editBtnHandler(invoice._id)">
               <mat-icon>edit</mat-icon>
               <span>Edit</span>
