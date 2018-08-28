@@ -24,14 +24,14 @@ export class AuthComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (this.jwtService.getToken()) {
+      this.router.navigate(["/dashboard"]);
+    }
     this.initForm();
     this.title = this.router.url === "/login" ? "Login" : "Signup";
   }
 
   private initForm() {
-    if (this.jwtService.getToken()) {
-      this.router.navigate(["/dashboard"]);
-    }
     this.authForm = this.fb.group({
       email: ["", Validators.required],
       password: ["", Validators.required]
@@ -75,7 +75,7 @@ export class AuthComponent implements OnInit {
           console.log(data);
         },
         err => {
-          this.errorHandler(err, err.error);
+          this.errorHandler(err, err.message);
         }
       );
     } else {
