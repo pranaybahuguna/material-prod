@@ -3,14 +3,18 @@ import {
   HttpInterceptor,
   HttpRequest,
   HttpHandler,
-  HttpEvent
+  HttpEvent,
+  HttpEventType,
+  HttpErrorResponse
 } from "@angular/common/http";
 import { Observable } from "rxjs/Observable";
 import { JwtService } from "./jwt.service";
+import { Router } from "@angular/router";
+import "rxjs/add/operator/do";
 
 @Injectable()
 export class TokenInterceptorService implements HttpInterceptor {
-  constructor(private jwtService: JwtService) {}
+  constructor(private jwtService: JwtService, private router: Router) {}
 
   intercept(
     req: HttpRequest<any>,
@@ -25,6 +29,16 @@ export class TokenInterceptorService implements HttpInterceptor {
       headersConfig["Authorization"] = `bearer ${token}`;
     }
     const _req = req.clone({ setHeaders: headersConfig });
-    return next.handle(_req);
+    return next.handle(_req).do(
+      (event: HttpEvent<any>) => {},
+      err => {
+        if (err instanceof HttpErrorResponse) {
+          if (err.status === 401) {
+            this.jwtService.destroyToken();
+            this.router.navigate(["/login"]);
+          }
+        }
+      }
+    );
   }
 }

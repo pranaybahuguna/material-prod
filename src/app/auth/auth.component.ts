@@ -29,6 +29,9 @@ export class AuthComponent implements OnInit {
   }
 
   private initForm() {
+    if (this.jwtService.getToken()) {
+      this.router.navigate(["/dashboard"]);
+    }
     this.authForm = this.fb.group({
       email: ["", Validators.required],
       password: ["", Validators.required]
