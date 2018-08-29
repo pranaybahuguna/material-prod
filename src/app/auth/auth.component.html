@@ -9,7 +9,13 @@
       <mat-card-title color="primary">{{title}}</mat-card-title>
       <mat-card-content>
           <form class="form-container" [formGroup]="authForm" novalidate (ngSubmit)="onSubmit()">
-              <mat-form-field color="primary">
+            <mat-form-field color="accent" *ngIf="title === 'Signup'" >
+              <input matInput
+               placeholder="Name"
+               formControlName="name"
+                type="text">
+            </mat-form-field>  
+            <mat-form-field color="primary">
                 <input matInput placeholder="Email" formControlName="email">
                 <mat-error *ngIf="authForm.controls.email.invalid && authForm.controls.email.touched"> email is required </mat-error>
               </mat-form-field>
@@ -21,6 +27,8 @@
                 <button mat-raised-button  type="submit" color="primary" class="btn-block">{{title}}</button>
                 <!--<button mat-raised-button class="loginBtn loginBtn--google" (click)="googleAuthHandler()">Google</button>-->
                 <div class="alternative" *ngIf="title==='Login'">
+                <a class="btn btn-social btn-block forgot-password" mat-button (click) ="forgotPassHandler()">
+                        Forgot password</a>
                 <a href="/api/auth/google"  class="btn btn-social btn-block btn-google" mat-button >
                   <i class="fa fa-google" style="margin-bottom: 2px;"></i>
                    Login with Google</a>

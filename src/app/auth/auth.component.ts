@@ -4,6 +4,7 @@ import { AuthService } from "../core/services/auth.service";
 import { JwtService } from "../core/services/jwt.service";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material";
+import { User } from "../core/models/user";
 
 @Component({
   selector: "app-auth",
@@ -34,7 +35,8 @@ export class AuthComponent implements OnInit {
   private initForm() {
     this.authForm = this.fb.group({
       email: ["", Validators.required],
-      password: ["", Validators.required]
+      password: ["", Validators.required],
+      name: ""
     });
   }
 
@@ -62,15 +64,18 @@ export class AuthComponent implements OnInit {
     this.resultsLoading = isEnabled;
     this.cdRef.detectChanges();
   }
+  forgotPassHandler() {
+    this.router.navigate(["/forgot-password"]);
+  }
   onSubmit() {
     this.changeSpinnerState(true);
     if (this.title === "Signup") {
       this.authService.signup(this.authForm.value).subscribe(
         data => {
-          this.router.navigate(["/dashboard", "invoices"]);
           this.snackBar.open(data.message, "Success", {
             duration: 3000
           });
+          this.router.navigate(["/login"]);
           this.changeSpinnerState(false);
           console.log(data);
         },
@@ -79,13 +84,15 @@ export class AuthComponent implements OnInit {
         }
       );
     } else {
-      this.authService.login(this.authForm.value).subscribe(
+      let { email, password } = this.authForm.value;
+      let user: User = { email, password };
+      this.authService.login(user).subscribe(
         data => {
           this.jwtService.setToken(data.token);
-          this.router.navigate(["/dashboard", "invoices"]);
           this.snackBar.open("Login Successful", "Success", {
             duration: 3000
           });
+          this.router.navigate(["/dashboard", "invoices"]);
           this.changeSpinnerState(false);
           console.log(data);
         },

@@ -1,6 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Invoice } from "../../models/invoice";
+import { saveAs } from "file-saver";
+import { InvoiceService } from "../../services/invoice.service";
+import { MatSnackBar } from "@angular/material";
 
 @Component({
   selector: "app-invoice-view",
@@ -10,7 +13,13 @@ import { Invoice } from "../../models/invoice";
 export class InvoiceViewComponent implements OnInit {
   invoice: Invoice;
   total: number;
-  constructor(private route: ActivatedRoute) {}
+  isResultsLoading = false;
+
+  constructor(
+    private route: ActivatedRoute,
+    private invoiceService: InvoiceService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit() {
     this.route.data.subscribe((data: { invoice: Invoice }) => {
@@ -27,6 +36,27 @@ export class InvoiceViewComponent implements OnInit {
         salesTax = (this.total * this.invoice.tax) / 100;
       }
       this.total += salesTax;
+    });
+  }
+  downloadHandler(id) {
+    this.isResultsLoading = true;
+    this.invoiceService.downloadInvoice(id).subscribe(
+      data => {
+        saveAs(data, this.invoice.item);
+      },
+      err => {
+        this.errorHandler(err, "Error while downloading invoice");
+      },
+      () => {
+        this.isResultsLoading = false;
+      }
+    );
+  }
+  private errorHandler(error, message) {
+    console.error(error);
+    this.isResultsLoading = false;
+    this.snackBar.open(message, "Error", {
+      duration: 2000
     });
   }
 }
